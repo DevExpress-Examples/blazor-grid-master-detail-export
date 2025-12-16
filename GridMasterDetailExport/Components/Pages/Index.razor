@@ -1,6 +1,102 @@
 ﻿@page "/"
-<PageTitle>Welcome</PageTitle>
+@rendermode InteractiveServer
+@inject IJSRuntime JS
 
-<div class="main-content">
-    Welcome to your new DevExpress Blazor Application
-</div>
+@using GridMasterDetailExport.Data
+
+<DxGrid @ref="MasterGrid" Data="DataProvider.GetUsers()" KeyFieldName="UserID">
+    <ToolbarTemplate Context="ctx">
+        <form id="export-form" class="w-100" target="_blank" method="post"
+              action="api/home/@(exportFormat)">
+            <AntiforgeryToken />
+            <input type="hidden" name="masterColumns" value="@masterColumns" />
+            <input type="hidden" name="detailColumns" value="@detailColumns" />
+            <input type="hidden" name="expandedStates" value="@expandedStates" />
+            <DxToolbar>
+                <Items>
+                    <DxToolbarItem Text="Export as PDF"
+                                   Click='async() => await ExportTo("pdf")' />
+                    <DxToolbarItem Text="Export as XLSX"
+                                   Click='async() => await ExportTo("xlsx")' />
+                    <DxToolbarItem Text="Export as CSV"
+                                   Click='async() => await ExportTo("csv")' />
+                </Items>
+            </DxToolbar>
+        </form>
+    </ToolbarTemplate>
+    <Columns>
+        <DxGridDataColumn AllowSort="false" FieldName="UserID" />
+        <DxGridDataColumn AllowSort="false" FieldName="UserName" />
+    </Columns>
+    <DetailRowTemplate Context="ctx">
+        @{
+            User user = ctx.DataItem as User ?? new();
+            var userOrders =
+                DataProvider.GetOrders()
+                .Where(o => o.UserID == user.UserID);
+        }
+        <DxGrid @ref="DetailGrid" Data="userOrders" KeyFieldName="OrderID">
+            <Columns>
+                <DxGridDataColumn AllowSort="false" FieldName="OrderID" />
+                <DxGridDataColumn AllowSort="false" FieldName="OrderDate" />
+                <DxGridDataColumn AllowSort="false" FieldName="ProductName" />
+            </Columns>
+        </DxGrid>
+    </DetailRowTemplate>
+</DxGrid>
+
+@code {
+    private string? masterColumns;
+    private string? detailColumns;
+    private string? expandedStates;
+    private string exportFormat = "pdf";
+    private DxGrid? masterGrid;
+    private DxGrid? detailGrid;
+
+    public DxGrid? MasterGrid {
+        get => masterGrid;
+        private set {
+            if(masterGrid is null) {
+                masterGrid = value;
+                masterColumns = string.Join(";",
+                    GetVisibleColumnNames(masterGrid));
+            }
+        }
+    }
+
+    public DxGrid? DetailGrid {
+        get => detailGrid;
+        private set {
+            if(detailGrid is null) {
+                detailGrid = value;
+                detailColumns = string.Join(";",
+                    GetVisibleColumnNames(detailGrid));
+            }
+        }
+    }
+
+    private async Task ExportTo(string format) {
+        await Task.Run(() => {
+            exportFormat = format;
+            expandedStates = string.Join(";", GetRowsExpandedStates());
+        });
+        await JS.InvokeVoidAsync("submitForm");
+    }
+
+    private IEnumerable<string> GetVisibleColumnNames(IGrid? grid) {
+        return grid?.GetVisibleColumns()
+                    .OfType<DxGridDataColumn>()
+                    .Select(c => c.FieldName ?? c.Name) ?? [];
+    }
+
+    private Dictionary<string, bool> GetRowsExpandedStates() {
+        Dictionary<string, bool> masterRowExpandedStates = new();
+        for(int i = 0; i < masterGrid?.GetVisibleRowCount(); i++) {
+            if(masterGrid.GetDataItem(i) is User user) {
+                masterRowExpandedStates[user.UserID.ToString()]
+                    = masterGrid.IsDetailRowExpanded(i);
+            }
+        }
+        return masterRowExpandedStates;
+    }
+}

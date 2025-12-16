@@ -10,8 +10,13 @@
     @DxResourceManager.RegisterTheme(FluentLight)
     @DxResourceManager.RegisterScripts()
     <link href=@AppendVersion("css/site.css") rel="stylesheet" />
-    <link href=@AppendVersion("BlazorBlankServer.styles.css") rel="stylesheet" />
+    <link href=@AppendVersion("GridMasterDetailExport.styles.css") rel="stylesheet" />
     <HeadOutlet />
+    <script type="text/javascript">
+        function submitForm(){
+            document.getElementById('export-form').submit();
+        }
+    </script>
 </head>
 <body class="dxbl-theme-fluent">
     <Routes />
