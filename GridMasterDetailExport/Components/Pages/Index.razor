@@ -4,7 +4,11 @@
 
 @using GridMasterDetailExport.Data
 
-<DxGrid @ref="MasterGrid" Data="DataProvider.GetUsers()" KeyFieldName="UserID">
+<DxGrid @ref="MasterGrid"
+    AllowColumnReorder="false"
+    AllowSort="false"
+    Data="DataProvider.GetUsers()"
+    KeyFieldName="UserID">
     <ToolbarTemplate Context="ctx">
         <form id="export-form" class="w-100" target="_blank" method="post"
               action="api/home/@(exportFormat)">
@@ -35,11 +39,15 @@
                 DataProvider.GetOrders()
                 .Where(o => o.UserID == user.UserID);
         }
-        <DxGrid @ref="DetailGrid" Data="userOrders" KeyFieldName="OrderID">
+        <DxGrid @ref="DetailGrid"
+            AllowColumnReorder="false"
+            AllowSort="false"
+            Data="userOrders"
+            KeyFieldName="OrderID">
             <Columns>
-                <DxGridDataColumn AllowSort="false" FieldName="OrderID" />
-                <DxGridDataColumn AllowSort="false" FieldName="OrderDate" />
-                <DxGridDataColumn AllowSort="false" FieldName="ProductName" />
+                <DxGridDataColumn FieldName="OrderID" />
+                <DxGridDataColumn FieldName="OrderDate" />
+                <DxGridDataColumn FieldName="ProductName" />
             </Columns>
         </DxGrid>
     </DetailRowTemplate>
@@ -80,7 +88,7 @@
             exportFormat = format;
             expandedStates = string.Join(";", GetRowsExpandedStates());
         });
-        await JS.InvokeVoidAsync("submitForm");
+        await JS.InvokeVoidAsync("submitForm", "export-form");
     }
 
     private IEnumerable<string> GetVisibleColumnNames(IGrid? grid) {
