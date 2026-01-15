@@ -10,7 +10,7 @@
     Data="DataProvider.GetUsers()"
     KeyFieldName="UserID">
     <ToolbarTemplate Context="ctx">
-        <form id="export-form" class="w-100" target="_blank" method="post"
+        <form id="@exportFormId" class="w-100" target="_blank" method="post"
               action="api/home/@(exportFormat)">
             <AntiforgeryToken />
             <input type="hidden" name="masterColumns" value="@masterColumns" />
@@ -29,8 +29,8 @@
         </form>
     </ToolbarTemplate>
     <Columns>
-        <DxGridDataColumn AllowSort="false" FieldName="UserID" />
-        <DxGridDataColumn AllowSort="false" FieldName="UserName" />
+        <DxGridDataColumn FieldName="UserID" />
+        <DxGridDataColumn FieldName="UserName" />
     </Columns>
     <DetailRowTemplate Context="ctx">
         @{
@@ -54,6 +54,7 @@
 </DxGrid>
 
 @code {
+    private readonly string exportFormId = "export-form";
     private string? masterColumns;
     private string? detailColumns;
     private string? expandedStates;
@@ -88,7 +89,7 @@
             exportFormat = format;
             expandedStates = string.Join(";", GetRowsExpandedStates());
         });
-        await JS.InvokeVoidAsync("submitForm", "export-form");
+        await JS.InvokeVoidAsync("submitForm", exportFormId);
     }
 
     private IEnumerable<string> GetVisibleColumnNames(IGrid? grid) {

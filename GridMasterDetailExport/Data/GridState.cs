@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GridMasterDetailExport.Data; 
+namespace GridMasterDetailExport.Data;
 public class GridState {
-    public string[] MasterColumnNames 
+    public string[] MasterColumnNames
         => MasterColumnsString?.Split(';') ?? [];
 
     public string[] DetailColumnNames

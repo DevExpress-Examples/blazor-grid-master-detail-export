@@ -28,18 +28,11 @@ public class HomeController : ControllerBase {
              "text/csv");
     }
 
-    public IActionResult ReportDefinition([FromForm] GridState gridState) {
-        return GetExportResult(gridState,
-            (r, ms) => r.SaveLayoutToXml(ms),
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    }
-
-
     private FileContentResult GetExportResult(
         GridState gridState,
         Action<XtraReport, MemoryStream> exportAction,
         string contentType) {
-        using(XtraReport report = ReportGenerationHelpers.GetReportFromDxGrid(gridState))
+        using(var report = ReportGenerationHelpers.GetReportFromDxGrid(gridState))
         using(var ms = new MemoryStream()) {
             exportAction?.Invoke(report, ms);
             return File(ms.ToArray(), contentType);

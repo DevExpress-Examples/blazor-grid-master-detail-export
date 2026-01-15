@@ -69,7 +69,8 @@ namespace GridMasterDetailExport.Reports {
 
             return report;
         }
-        public static FederationDataSource CreateFederationDataSource(DataComponentBase masterDataSource, DataComponentBase detailDataSource, string parentKeyColumn, string nestedKeyColumn, Dictionary<string, bool> expandedStates) {
+
+        static FederationDataSource CreateFederationDataSource(DataComponentBase masterDataSource, DataComponentBase detailDataSource, string parentKeyColumn, string nestedKeyColumn, Dictionary<string, bool> expandedStates) {
             ObjectDataSource expandedStateDataSource = new ObjectDataSource() {
                 Name = "ExpandedState",
                 DataSource = typeof(ExpandedState),
@@ -153,7 +154,6 @@ namespace GridMasterDetailExport.Reports {
             report.Bands.Add(footerBand);
             footerBand.Controls.Add(new XRPanel() { HeightF = height });
         }
-
 
         public static void AddDetailReport(this XtraReportBase report, string dataMember, string[] columns, RectangleF rect, string headerStyleName, string rowStyleName) {
             var detailReportBand = new DetailReportBand() {

@@ -1,4 +1,4 @@
-﻿namespace GridMasterDetailExport.Data; 
+﻿namespace GridMasterDetailExport.Data;
 public class DataProvider {
     private static List<User> users = [
         new User(){ UserID = 1, UserName = "Alex" },
