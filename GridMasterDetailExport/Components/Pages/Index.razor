@@ -1,6 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime JS
 @using DevExpress.XtraReports.UI
 @using GridMasterDetailExport.Data
 @using GridMasterDetailExport.Reports
@@ -112,6 +112,6 @@
         stream.Seek(0, SeekOrigin.Begin);
 
         using var streamRef = new DotNetStreamReference(stream);
-        await JsRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
     }
 }
