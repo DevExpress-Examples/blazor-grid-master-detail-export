@@ -1,16 +1,16 @@
 ﻿using DevExpress.XtraReports.UI;
 using GridMasterDetailExport.Data;
-using GridMasterDetailExport.Reports.Master;
+using GridMasterDetailExport.Reports;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DXApplication1.Controllers;
+namespace GridMasterDetailExport.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public class HomeController : ControllerBase {
     [HttpPost("pdf")]
     public IActionResult PDF([FromForm] GridState gridState) {
-        return GetExportResult(gridState, 
-            (r, ms) => r.ExportToPdf(ms), 
+        return GetExportResult(gridState,
+            (r, ms) => r.ExportToPdf(ms),
             "application/pdf");
     }
 
@@ -24,20 +24,23 @@ public class HomeController : ControllerBase {
     [HttpPost("csv")]
     public IActionResult Csv([FromForm] GridState gridState) {
         return GetExportResult(gridState,
-            (r, ms) => r.ExportToCsv(ms),
-            "text/csv");
+             (r, ms) => r.ExportToCsv(ms),
+             "text/csv");
     }
+
+    public IActionResult ReportDefinition([FromForm] GridState gridState) {
+        return GetExportResult(gridState,
+            (r, ms) => r.SaveLayoutToXml(ms),
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
 
     private FileContentResult GetExportResult(
         GridState gridState,
         Action<XtraReport, MemoryStream> exportAction,
         string contentType) {
+        using(XtraReport report = ReportGenerationHelpers.GetReportFromDxGrid(gridState))
         using(var ms = new MemoryStream()) {
-            XtraReport report = new GridReport(
-                gridState.MasterColumnNames,
-                gridState.DetailColumnNames,
-                gridState.RowExpandedStates
-            );
             exportAction?.Invoke(report, ms);
             return File(ms.ToArray(), contentType);
         }

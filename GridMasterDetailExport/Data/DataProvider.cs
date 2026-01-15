@@ -1,12 +1,12 @@
 ﻿namespace GridMasterDetailExport.Data; 
 public class DataProvider {
-    private static List<User> users = new() {
+    private static List<User> users = [
         new User(){ UserID = 1, UserName = "Alex" },
         new User(){ UserID = 2, UserName = "Kevin" },
         new User(){ UserID = 3, UserName = "Rose" },
-    };
+    ];
 
-    private static List<Order> orders = new() {
+    private static List<Order> orders = [
         new Order(){ OrderID = 1, UserID = 1, OrderDate = DateTime.Today.AddDays(1), ProductName = "Book" },
         new Order(){ OrderID = 2, UserID = 1, OrderDate = DateTime.Today.AddDays(2), ProductName = "Sugar" },
         new Order(){ OrderID = 3, UserID = 1, OrderDate = DateTime.Today.AddDays(3), ProductName = "Laptop" },
@@ -19,7 +19,7 @@ public class DataProvider {
         new Order(){ OrderID = 10, UserID = 3, OrderDate = DateTime.Today.AddDays(7), ProductName = "Mug" },
         new Order(){ OrderID = 11, UserID = 3, OrderDate = DateTime.Today.AddDays(8), ProductName = "Magnet" },
         new Order(){ OrderID = 12, UserID = 3, OrderDate = DateTime.Today.AddDays(9), ProductName = "Vitamins" },
-    };
+    ];
 
     public static List<User> GetUsers() => users;
 
