@@ -1,8 +1,10 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@inject IJSRuntime JS
-
+@inject IServiceProvider ServiceProvider
+@using DevExpress.Blazor.Internal
+@using DevExpress.XtraReports.UI
 @using GridMasterDetailExport.Data
+@using GridMasterDetailExport.Reports
 
 <DxGrid @ref="MasterGrid"
     AllowColumnReorder="false"
@@ -10,23 +12,13 @@
     Data="DataProvider.GetUsers()"
     KeyFieldName="UserID">
     <ToolbarTemplate Context="ctx">
-        <form id="@exportFormId" class="w-100" target="_blank" method="post"
-              action="api/home/@(exportFormat)">
-            <AntiforgeryToken />
-            <input type="hidden" name="masterColumns" value="@masterColumns" />
-            <input type="hidden" name="detailColumns" value="@detailColumns" />
-            <input type="hidden" name="expandedStates" value="@expandedStates" />
-            <DxToolbar>
-                <Items>
-                    <DxToolbarItem Text="Export as PDF"
-                                   Click='async() => await ExportTo("pdf")' />
-                    <DxToolbarItem Text="Export as XLSX"
-                                   Click='async() => await ExportTo("xlsx")' />
-                    <DxToolbarItem Text="Export as CSV"
-                                   Click='async() => await ExportTo("csv")' />
-                </Items>
-            </DxToolbar>
-        </form>
+        <DxToolbar>
+            <Items>
+                <DxToolbarItem Text="Export as PDF" Click="ExportToPdf" />
+                <DxToolbarItem Text="Export as XLSX" Click="ExportToXlsx" />
+                <DxToolbarItem Text="Export as CSV" Click="ExportToCsv" />
+            </Items>
+        </DxToolbar>
     </ToolbarTemplate>
     <Columns>
         <DxGridDataColumn FieldName="UserID" />
@@ -54,58 +46,65 @@
 </DxGrid>
 
 @code {
-    private readonly string exportFormId = "export-form";
-    private string? masterColumns;
-    private string? detailColumns;
-    private string? expandedStates;
-    private string exportFormat = "pdf";
-    private DxGrid? masterGrid;
-    private DxGrid? detailGrid;
+    public DxGrid? MasterGrid { get; set; }
 
-    public DxGrid? MasterGrid {
-        get => masterGrid;
-        private set {
-            if(masterGrid is null) {
-                masterGrid = value;
-                masterColumns = string.Join(";",
-                    GetVisibleColumnNames(masterGrid));
-            }
-        }
+    public DxGrid? DetailGrid { get; set; }
+
+    private async Task ExportToPdf() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToPdfAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.pdf");
     }
 
-    public DxGrid? DetailGrid {
-        get => detailGrid;
-        private set {
-            if(detailGrid is null) {
-                detailGrid = value;
-                detailColumns = string.Join(";",
-                    GetVisibleColumnNames(detailGrid));
-            }
-        }
+    private async Task ExportToXlsx() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToXlsxAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.xlsx");
     }
 
-    private async Task ExportTo(string format) {
-        await Task.Run(() => {
-            exportFormat = format;
-            expandedStates = string.Join(";", GetRowsExpandedStates());
-        });
-        await JS.InvokeVoidAsync("submitForm", exportFormId);
+    private async Task ExportToCsv() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToCsvAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.csv");
     }
 
-    private IEnumerable<string> GetVisibleColumnNames(IGrid? grid) {
+    private XtraReport GetReport() {
+        return ReportGenerationHelpers.GetReportFromDxGrid(
+            GetVisibleColumnNames(MasterGrid),
+            GetVisibleColumnNames(DetailGrid),
+            GetRowsExpandedStates()
+        );
+    }
+
+    private static string[] GetVisibleColumnNames(IGrid? grid) {
         return grid?.GetVisibleColumns()
                     .OfType<DxGridDataColumn>()
-                    .Select(c => c.FieldName ?? c.Name) ?? [];
+                    .Select(c => c.FieldName ?? c.Name).ToArray() ?? [];
     }
 
     private Dictionary<string, bool> GetRowsExpandedStates() {
         Dictionary<string, bool> masterRowExpandedStates = new();
-        for(int i = 0; i < masterGrid?.GetVisibleRowCount(); i++) {
-            if(masterGrid.GetDataItem(i) is User user) {
+        for(int i = 0; i < MasterGrid?.GetVisibleRowCount(); i++) {
+            if(MasterGrid.GetDataItem(i) is User user) {
                 masterRowExpandedStates[user.UserID.ToString()]
-                    = masterGrid.IsDetailRowExpanded(i);
+                    = MasterGrid.IsDetailRowExpanded(i);
             }
         }
         return masterRowExpandedStates;
+    }
+
+    async Task DownloadStreamAsync(Stream stream, string fileName) {
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        using var streamRef = new DotNetStreamReference(stream);
+        await ServiceProvider
+            .GetRequiredService<ISafeJSRuntime>()
+            .Dx()
+            .UtilsModule
+            .DownloadFileFromStreamAsync(CancellationToken.None, fileName, streamRef);
     }
 }
