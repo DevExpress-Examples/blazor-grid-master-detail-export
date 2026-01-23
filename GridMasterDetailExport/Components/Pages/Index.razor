@@ -6,10 +6,10 @@
 @using GridMasterDetailExport.Reports
 
 <DxGrid @ref="MasterGrid"
-    AllowColumnReorder="false"
-    AllowSort="false"
-    Data="DataProvider.GetUsers()"
-    KeyFieldName="UserID">
+        AllowColumnReorder="false"
+        AllowSort="false"
+        Data="DataProvider.GetUsers()"
+        KeyFieldName="UserID">
     <ToolbarTemplate Context="ctx">
         <DxToolbar>
             <Items>
@@ -27,14 +27,14 @@
         @{
             User user = ctx.DataItem as User ?? new();
             var userOrders =
-                DataProvider.GetOrders()
-                .Where(o => o.UserID == user.UserID);
+            DataProvider.GetOrders()
+            .Where(o => o.UserID == user.UserID);
         }
         <DxGrid @ref="DetailGrid"
-            AllowColumnReorder="false"
-            AllowSort="false"
-            Data="userOrders"
-            KeyFieldName="OrderID">
+                AllowColumnReorder="false"
+                AllowSort="false"
+                Data="userOrders"
+                KeyFieldName="OrderID">
             <Columns>
                 <DxGridDataColumn FieldName="OrderID" />
                 <DxGridDataColumn FieldName="OrderDate" />
@@ -43,19 +43,7 @@
         </DxGrid>
     </DetailRowTemplate>
 </DxGrid>
-<script>
-  window.downloadFileFromStream = async (fileName, contentStreamReference) => {
-    const arrayBuffer = await contentStreamReference.arrayBuffer();
-    const blob = new Blob([arrayBuffer]);
-    const url = URL.createObjectURL(blob);
-    const anchorElement = document.createElement('a');
-    anchorElement.href = url;
-    anchorElement.download = fileName ?? '';
-    anchorElement.click();
-    anchorElement.remove();
-    URL.revokeObjectURL(url);
-  }
-</script>
+
 @code {
     public DxGrid? MasterGrid { get; set; }
 
