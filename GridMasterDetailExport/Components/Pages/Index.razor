@@ -1,6 +1,105 @@
 ﻿@page "/"
-<PageTitle>Welcome</PageTitle>
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@using DevExpress.XtraReports.UI
+@using GridMasterDetailExport.Data
+@using GridMasterDetailExport.Reports
 
-<div class="main-content">
-    Welcome to your new DevExpress Blazor Application
-</div>
+<DxGrid @ref="MasterGrid"
+        AllowColumnReorder="false"
+        AllowSort="false"
+        Data="DataProvider.GetUsers()"
+        KeyFieldName="UserID">
+    <ToolbarTemplate Context="ctx">
+        <DxToolbar>
+            <Items>
+                <DxToolbarItem Text="Export as PDF" Click="ExportToPdf" />
+                <DxToolbarItem Text="Export as XLSX" Click="ExportToXlsx" />
+                <DxToolbarItem Text="Export as CSV" Click="ExportToCsv" />
+            </Items>
+        </DxToolbar>
+    </ToolbarTemplate>
+    <Columns>
+        <DxGridDataColumn FieldName="UserID" />
+        <DxGridDataColumn FieldName="UserName" />
+    </Columns>
+    <DetailRowTemplate Context="ctx">
+        @{
+            User user = ctx.DataItem as User ?? new();
+            var userOrders =
+            DataProvider.GetOrders()
+            .Where(o => o.UserID == user.UserID);
+        }
+        <DxGrid @ref="DetailGrid"
+                AllowColumnReorder="false"
+                AllowSort="false"
+                Data="userOrders"
+                KeyFieldName="OrderID">
+            <Columns>
+                <DxGridDataColumn FieldName="OrderID" />
+                <DxGridDataColumn FieldName="OrderDate" />
+                <DxGridDataColumn FieldName="ProductName" />
+            </Columns>
+        </DxGrid>
+    </DetailRowTemplate>
+</DxGrid>
+
+@code {
+    public DxGrid? MasterGrid { get; set; }
+
+    public DxGrid? DetailGrid { get; set; }
+
+    private async Task ExportToPdf() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToPdfAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.pdf");
+    }
+
+    private async Task ExportToXlsx() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToXlsxAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.xlsx");
+    }
+
+    private async Task ExportToCsv() {
+        using var report = GetReport();
+        using var stream = new MemoryStream();
+        await report.ExportToCsvAsync(stream);
+        await DownloadStreamAsync(stream, "exportResult.csv");
+    }
+
+    private XtraReport GetReport() {
+        return ReportGenerationHelpers.GetReportFromDxGrid(
+            GetVisibleColumnNames(MasterGrid),
+            GetVisibleColumnNames(DetailGrid),
+            GetRowsExpandedStates()
+        );
+    }
+
+    private static string[] GetVisibleColumnNames(IGrid? grid) {
+        return grid?.GetVisibleColumns()
+                    .OfType<DxGridDataColumn>()
+                    .Select(c => c.FieldName ?? c.Name).ToArray() ?? [];
+    }
+
+    private Dictionary<string, bool> GetRowsExpandedStates() {
+        Dictionary<string, bool> masterRowExpandedStates = new();
+        for(int i = 0; i < MasterGrid?.GetVisibleRowCount(); i++) {
+            if(MasterGrid.GetDataItem(i) is User user) {
+                masterRowExpandedStates[user.UserID.ToString()]
+                    = MasterGrid.IsDetailRowExpanded(i);
+            }
+        }
+        return masterRowExpandedStates;
+    }
+
+    async Task DownloadStreamAsync(Stream stream, string fileName) {
+
+        stream.Seek(0, SeekOrigin.Begin);
+
+        using var streamRef = new DotNetStreamReference(stream);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+}
