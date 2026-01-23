@@ -1,24 +1,24 @@
 ﻿namespace GridMasterDetailExport.Data;
 public class DataProvider {
-    private static readonly List<User> users = [
-        new User(1, "Alex"),
-        new User(2, "Kevin"),
-        new User(3, "Rose"),
+    private static List<User> users = [
+        new User(){ UserID = 1, UserName = "Alex" },
+        new User(){ UserID = 2, UserName = "Kevin" },
+        new User(){ UserID = 3, UserName = "Rose" },
     ];
 
-    private static readonly List<Order> orders = [
-        new Order(1, 1, DateTime.Today.AddDays(1), "Book"),
-        new Order(2, 1, DateTime.Today.AddDays(2), "Sugar"),
-        new Order(3, 1, DateTime.Today.AddDays(3), "Laptop"),
-        new Order(4, 2, DateTime.Today.AddDays(1), "Brick"),
-        new Order(5, 2, DateTime.Today.AddDays(2), "Stone"),
-        new Order(6, 2, DateTime.Today.AddDays(3), "Potato"),
-        new Order(7, 2, DateTime.Today.AddDays(4), "Cucumber"),
-        new Order(8, 2, DateTime.Today.AddDays(5), "Keyboard"),
-        new Order(9, 3, DateTime.Today.AddDays(6), "Pencil"),
-        new Order(10, 3, DateTime.Today.AddDays(7), "Mug"),
-        new Order(11, 3, DateTime.Today.AddDays(8), "Magnet"),
-        new Order(12, 3, DateTime.Today.AddDays(9), "Vitamins"),
+    private static List<Order> orders = [
+        new Order(){ OrderID = 1, UserID = 1, OrderDate = DateTime.Today.AddDays(1), ProductName = "Book" },
+        new Order(){ OrderID = 2, UserID = 1, OrderDate = DateTime.Today.AddDays(2), ProductName = "Sugar" },
+        new Order(){ OrderID = 3, UserID = 1, OrderDate = DateTime.Today.AddDays(3), ProductName = "Laptop" },
+        new Order(){ OrderID = 4, UserID = 2, OrderDate = DateTime.Today.AddDays(1), ProductName = "Brick" },
+        new Order(){ OrderID = 5, UserID = 2, OrderDate = DateTime.Today.AddDays(2), ProductName = "Stone" },
+        new Order(){ OrderID = 6, UserID = 2, OrderDate = DateTime.Today.AddDays(3), ProductName = "Potato" },
+        new Order(){ OrderID = 7, UserID = 2, OrderDate = DateTime.Today.AddDays(4), ProductName = "Cucumber" },
+        new Order(){ OrderID = 8, UserID = 2, OrderDate = DateTime.Today.AddDays(5), ProductName = "Keyboard" },
+        new Order(){ OrderID = 9, UserID = 3, OrderDate = DateTime.Today.AddDays(6), ProductName = "Pencil" },
+        new Order(){ OrderID = 10, UserID = 3, OrderDate = DateTime.Today.AddDays(7), ProductName = "Mug" },
+        new Order(){ OrderID = 11, UserID = 3, OrderDate = DateTime.Today.AddDays(8), ProductName = "Magnet" },
+        new Order(){ OrderID = 12, UserID = 3, OrderDate = DateTime.Today.AddDays(9), ProductName = "Vitamins" },
     ];
 
     public static List<User> GetUsers() => users;

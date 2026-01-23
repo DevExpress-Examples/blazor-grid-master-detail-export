@@ -28,4 +28,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AllowAnonymous();
 
+app.MapControllers();
+
 app.Run();
