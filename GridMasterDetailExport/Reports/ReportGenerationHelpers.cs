@@ -12,7 +12,7 @@ using GridMasterDetailExport.Data;
 
 namespace GridMasterDetailExport.Reports {
     public static class ReportGenerationHelpers {
-        public static XtraReport GetReportFromDxGrid(GridState gridState) {
+        public static XtraReport GetReportFromDxGrid(string[] masterColumnNames, string[] detailColumnNames, Dictionary<string, bool> rowExpandedStates) {
             XtraReport report = new XtraReport() {
                 ReportUnit = ReportUnit.HundredthsOfAnInch,
                 PaperKind = DXPaperKind.Letter,
@@ -50,7 +50,7 @@ namespace GridMasterDetailExport.Reports {
             };
             detailDataSource.RebuildResultSchema();
 
-            var fds = ReportGenerationHelpers.CreateFederationDataSource(masterDataSource, detailDataSource, nameof(User.UserID), nameof(Order.UserID), gridState.RowExpandedStates);
+            var fds = ReportGenerationHelpers.CreateFederationDataSource(masterDataSource, detailDataSource, nameof(User.UserID), nameof(Order.UserID), rowExpandedStates);
             #endregion
 
             float contentWidth = report.PageWidthF - report.Margins.Left - report.Margins.Right;
@@ -58,11 +58,11 @@ namespace GridMasterDetailExport.Reports {
             report.DataSource = fds;
             report.DataMember = masterDataSource.Name;
 
-            report.AddTableHeaderBand(new RectangleF(0f, 0f, contentWidth, 25f), tableHeaderStyle.Name, gridState.MasterColumnNames);
-            report.AddTableRowBand(new RectangleF(0f, 0f, contentWidth, 25f), tableRowStyle.Name, gridState.MasterColumnNames, true);
+            report.AddTableHeaderBand(new RectangleF(0f, 0f, contentWidth, 25f), tableHeaderStyle.Name, masterColumnNames);
+            report.AddTableRowBand(new RectangleF(0f, 0f, contentWidth, 25f), tableRowStyle.Name, masterColumnNames, true);
             report.AddDetailReport(
                 $"{masterDataSource.Name}.{masterDataSource.Name}{detailDataSource.Name}",
-                gridState.DetailColumnNames,
+                detailColumnNames,
                 new RectangleF(20f, 20f, contentWidth - 20f, 25f),
                 tableHeaderStyle.Name,
                 tableRowStyle.Name);
