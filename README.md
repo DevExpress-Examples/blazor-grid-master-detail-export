@@ -6,7 +6,7 @@
 <!-- default badges end -->
 # Blazor Grid - Export Detail Views
 
-The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export data](https://docs.devexpress.com/Blazor/404338/components/grid/export) to multiple formats: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views to the resulting document using [DevExpress Reports for Web](https://www.devexpress.com/subscriptions/reporting/web/).
+The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export data](https://docs.devexpress.com/Blazor/404338/components/grid/export) to multiple formats: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views to the resulting document using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
 
 ![Blazor Grid - Export detail views](result.png)
 
@@ -58,7 +58,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
 
 ### Generate a Report
 
-1. [Create a report](./CS/GridMasterDetailExport/Reports/ReportGenerationHelpers.cs#L37) that uses Grid data. In this method, you can [customize appearance](./CS/GridMasterDetailExport/Reports/ReportGenerationHelpers.cs#L22) of the resulting document.
+1. [Create a report](https://docs.devexpress.com/XtraReports/115726/feature-guide-to-devexpress-reports/reporting-api/create-reports-in-code) that [uses Grid data](https://docs.devexpress.com/XtraReports/15034/feature-guide-to-devexpress-reports/bind-reports-to-data#data-source-types-runtime). In this method, you can [customize appearance](./CS/GridMasterDetailExport/Reports/ReportGenerationHelpers.cs#L22) of the resulting document.
 
     ```csharp
     public static XtraReport GetReportFromDxGrid(string[] masterColumnNames, string[] detailColumnNames, Dictionary<string, bool> rowExpandedStates) {
@@ -117,7 +117,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
 ## Documentation
 
 - [Export Data in Blazor Grid](https://docs.devexpress.com/Blazor/404338/components/grid/export)
-- [Printing and Export in Reporting Tools for Web](https://docs.devexpress.com/XtraReports/404502/web-reporting/common-features/printing?p=netframework)
+- [Export Reports](https://docs.devexpress.com/XtraReports/1302/feature-guide-to-devexpress-reports/store-and-distribute-reports/export-reports)
 
 ## More Examples
 
