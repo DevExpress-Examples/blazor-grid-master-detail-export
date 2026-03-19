@@ -9,8 +9,6 @@
     <base href="/" />
     @DxResourceManager.RegisterTheme(FluentLight)
     @DxResourceManager.RegisterScripts()
-    <link href=@AppendVersion("css/site.css") rel="stylesheet" />
-    <link href=@AppendVersion("GridMasterDetailExport.styles.css") rel="stylesheet" />
     <HeadOutlet />
     <script type="text/javascript" src="scripts/DownloadHelper.js"></script>
 </head>
@@ -23,5 +21,5 @@
 
 @code {
     private string AppendVersion(string path) => FileVersionProvider.AddFileVersionToPath("/", path);
-    private static readonly ITheme FluentLight = Themes.Fluent.Clone(p => p.AddFilePaths($"css/theme-fluent.css"));
+    private static readonly ITheme FluentLight = Themes.Fluent;
 }
