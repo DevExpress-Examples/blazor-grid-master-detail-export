@@ -92,7 +92,7 @@ To set up a grid with a master-detail layout, specify a [DetailRowTemplate](http
     }
     ```
 
-1. In Grid's `ExportToCsvAsync`/`ExportToXlsxAsync`/`ExportToPdfAsync` method, call the JavaScript function to download the file:
+1. Instead of calling the grid's `ExportToCsvAsync`/`ExportToXlsxAsync`/`ExportToPdfAsync` method, call the JavaScript function to download the exported file:
 
     ```csharp
     private async Task ExportToPdf() {
