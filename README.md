@@ -6,17 +6,17 @@
 <!-- default badges end -->
 # Blazor Grid - Export Detail Views
 
-The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export data](https://docs.devexpress.com/Blazor/404338/components/grid/export) to multiple formats: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views to the resulting document using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
+The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export](https://docs.devexpress.com/Blazor/404338/components/grid/export) master view data to multiple formats: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views to the resulting document using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
 
 ![Blazor Grid - Export detail views](result.png)
 
 ## Implementation Details
 
-The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.DetailRowTemplate#master-detail-grid). The built-in export engine exports only column captions and data cell values, and excludes template content. To include detail Grid data to the export, create an intermediate report with the required information and export that report to the resulting document.
+To set up a grid with a master-detail layout, specify a [DetailRowTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.DetailRowTemplate#master-detail-grid). Note that the built-in export engine exports master view data only: column captions and data cell values. Export excludes template content. To export detail data, create an intermediate master-detail report and export that report to required format.
 
 ### Collect Row Information
 
-1. Create a collection of visible columns in master and details Grids (using the [GetVisibleColumns](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.GetVisibleColumns) method):
+1. Create visible column collections for master and detail grids. Use the [GetVisibleColumns](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.GetVisibleColumns) method:
 
     ```charp
     private static string[] GetVisibleColumnNames(IGrid? grid) {
@@ -26,7 +26,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
     }
     ```
 
-1. Iterate through all visible rows and determine which detail rows are expanded ([IsDetailRowExpanded](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.IsDetailRowExpanded(System.Int32)) is `true`).
+1. Iterate through all master rows and determine which of them are expanded ([IsDetailRowExpanded](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.IsDetailRowExpanded(System.Int32)) is `true`).
 
     ```csharp
     private Dictionary<string, bool> GetRowsExpandedStates() {
@@ -41,7 +41,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
     }
     ```
 
-1. Pass detail row information to the method that generates a report:
+1. Pass all previously collected information to the method that generates a report:
 
     ```csharp
     public DxGrid? MasterGrid { get; set; }
@@ -58,7 +58,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
 
 ### Generate a Report
 
-1. [Create a report](https://docs.devexpress.com/XtraReports/115726/feature-guide-to-devexpress-reports/reporting-api/create-reports-in-code) that [uses Grid data](https://docs.devexpress.com/XtraReports/15034/feature-guide-to-devexpress-reports/bind-reports-to-data#data-source-types-runtime). In this method, you can [customize appearance](./CS/GridMasterDetailExport/Reports/ReportGenerationHelpers.cs#L22) of the resulting document.
+1. Declare a method that accepts grid layout information. [Create a report](https://docs.devexpress.com/XtraReports/115726/feature-guide-to-devexpress-reports/reporting-api/create-reports-in-code) and [bind it to data](https://docs.devexpress.com/XtraReports/15034/feature-guide-to-devexpress-reports/bind-reports-to-data#data-source-types-runtime). [Customize report appearance](./CS/GridMasterDetailExport/Reports/ReportGenerationHelpers.cs#L22) as your needs dictate.
 
     ```csharp
     public static XtraReport GetReportFromDxGrid(string[] masterColumnNames, string[] detailColumnNames, Dictionary<string, bool> rowExpandedStates) {
@@ -76,7 +76,7 @@ The Blazor Grid creates master-detail layouts using the [DetailRowTemplate](http
 
 ### Download the Resulting Document
 
-1. Implement a [JavaScript function](./CS/GridMasterDetailExport/wwwroot/scripts/DownloadHelper.js) that initiates the file download:
+1. Implement a [JavaScript function](./CS/GridMasterDetailExport/wwwroot/scripts/DownloadHelper.js) that initiates file download:
 
     ```js
     async function downloadFileFromStream(fileName, contentStreamReference) {
