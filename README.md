@@ -6,13 +6,13 @@
 <!-- default badges end -->
 # Blazor Grid - Export Detail Views
 
-The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export](https://docs.devexpress.com/Blazor/404338/components/grid/export) master view data to multiple formats: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views to the resulting document using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
+The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export](https://docs.devexpress.com/Blazor/404338/components/grid/export) master view data to multiple file formats, including: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views (generates a document) using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
 
 ![Blazor Grid - Export detail views](result.png)
 
 ## Implementation Details
 
-To set up a grid with a master-detail layout, specify a [DetailRowTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.DetailRowTemplate#master-detail-grid). Note that the built-in export engine exports master view data only: column captions and data cell values. Export excludes template content. To export detail data, create an intermediate master-detail report and export that report to required format.
+To set up a grid with a master-detail layout, specify a [DetailRowTemplate](https://docs.devexpress.com/Blazor/DevExpress.Blazor.DxGrid.DetailRowTemplate#master-detail-grid). Note that our built-in export engine exports master view data only: column captions and data cell values. Export excludes template content. To export detail data, create an intermediate master-detail report and export that report to a desired file format.
 
 ### Collect Row Information
 
