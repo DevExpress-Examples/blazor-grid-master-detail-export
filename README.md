@@ -8,7 +8,7 @@
 
 The [DevExpress Blazor Grid](https://docs.devexpress.com/Blazor/403143/components/grid) allows you to [export](https://docs.devexpress.com/Blazor/404338/components/grid/export) master view data to multiple file formats, including: PDF, CSV, XLS, and XLSX. This example extends built-in functionality and exports detail views (generates a document) using [DevExpress Reports](https://www.devexpress.com/subscriptions/reporting/web/).
 
-![Blazor Grid - Export detail views](result.png)
+![Blazor Grid - Export detail views](./result.png)
 
 ## Implementation Details
 
